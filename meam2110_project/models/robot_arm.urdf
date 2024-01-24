@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- =================================================================================== -->
+<!-- |    This document is a hand-crafted representation of the MEAM 2110 robot arm.   | -->
+<!-- =================================================================================== -->
+<robot name="robot_arm">
+  <link name="inertial_N"/>
+   <!-- Need an empty object to make a joint with the one link -->
+
+  <link name="body_O">
+  <!-- Single character link names aren't properly parsed by ParseVisual.m -->
+    <inertial>
+      <!-- mass=0 -->
+      <mass value="0"/>
+      
+      <!-- r_Oo_Ocm=[0, 0, 0], R_O_V = eye(3) -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+
+      <!-- I_O_Ocm = zeros(3) -->
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+
+    <visual>
+      <!-- r_Oo_Vo=[0, 0, 0], R_O_V = eye(3) -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+
+      <geometry>
+        <!-- sides=[0.3, 0.3, 0.3] -->
+        <box size="0.3 0.3 0.3"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="base_weld" type="fixed">
+    <!-- r_Oo_JOo=[0,0,0], R_O_JO=eye(3) -->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+
+    <parent link="inertial_N"/>
+    <child link="body_O"/>
+  </joint>
+
+  <link name="body_A">
+   <!-- Need an empty object to get to 3-DOF shoulder joint to upper arm (C) -->
+    <inertial>
+      <mass value="0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+
+  <link name="body_B">
+   <!-- Need an empty object to get to 3-DOF shoulder joint to upper arm (C) -->
+    <inertial>
+      <mass value="0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+
+  <link name="body_C">
+    <inertial>
+      <!-- mass=3 -->
+      <mass value="3"/>
+      
+      <!-- r_Co_Ccm=[0, 0, 0.5], R_C_V = eye(3) -->
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+
+      <!-- I_C_Ccm = m*diag(sides[1]^2 + sides[2]^2, s0^2+s2^2, s0^2+s1^2) -->
+      <inertia ixx="3.12" ixy="0" ixz="0" iyy="3.12" iyz="0" izz="0.24"/>
+    </inertial>
+
+    <visual>
+      <!-- r_Co_Vo=[0, 0, 0.5], R_C_V = eye(3) -->
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+
+      <geometry>
+        <!-- sides=[0.2, 0.2, 1] -->
+        <box size="0.2 0.2 1"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="shoulder_roll" type="revolute">
+    <!-- r_Po_Jo=[0,0,0], R_P_J=eye(3) -->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    
+    <!-- joint_axis=[1, 0, 0] -->
+    <axis xyz="1 0 0"/>
+
+    <parent link="body_O"/>
+    <child link="body_A"/>
+
+    <!-- Necessary tags but values don't matter -->
+    <limit effort="0" velocity="0"/>
+  </joint>
+
+  <joint name="shoulder_pitch" type="revolute">
+    <!-- r_Po_Jo=[0,0,0], R_P_J=eye(3) -->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    
+    <!-- joint_axis=[0, 1, 0] -->
+    <axis xyz="0 1 0"/>
+
+    <parent link="body_A"/>
+    <child link="body_B"/>
+
+    <!-- Necessary tags but values don't matter -->
+    <limit effort="0" velocity="0"/>
+  </joint>
+
+  <joint name="shoulder_yaw" type="revolute">
+    <!-- r_Po_Jo=[0,0,0], R_P_J=eye(3) -->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    
+    <!-- joint_axis=[0, 0, 1] -->
+    <axis xyz="0 0 1"/>
+
+    <parent link="body_B"/>
+    <child link="body_C"/>
+
+    <!-- Necessary tags but values don't matter -->
+    <limit effort="0" velocity="0"/>
+  </joint>
+
+  <link name="body_D">
+    <inertial>
+      <!-- mass=2 -->
+      <mass value="2"/>
+      
+      <!-- r_Do_Dcm=[0, 0, 0.5], R_D_V = eye(3) -->
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+
+      <!-- I_D_Dcm = m*diag(sides[1]^2 + sides[2]^2, s0^2+s2^2, s0^2+s1^2) -->
+      <inertia ixx="2.045" ixy="0" ixz="0" iyy="2.045" iyz="0" izz="0.09"/>
+    </inertial>
+
+    <visual>
+      <!-- r_Do_Vo=[0, 0, 0.5], R_D_V = eye(3) -->
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+
+      <geometry>
+        <!-- sides=[0.15, 0.15, 1] -->
+        <box size="0.15 0.15 1"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="elbow_pitch" type="revolute">
+    <!-- r_Po_Jo=[0,0,1], R_P_J=eye(3) -->
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+    
+    <!-- joint_axis=[0, 1, 0] -->
+    <axis xyz="0 1 0"/>
+
+    <parent link="body_C"/>
+    <child link="body_D"/>
+
+    <!-- Necessary tags but values don't matter -->
+    <limit effort="0" velocity="0"/>
+  </joint>
+
+  <link name="body_E">
+   <!-- Need an empty object to get to 3-DOF wrist joint to hand (G) -->
+    <inertial>
+      <mass value="0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+
+  <link name="body_F">
+   <!-- Need an empty object to get to 3-DOF wrist joint to hand (G) -->
+    <inertial>
+      <mass value="0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+    </inertial>
+  </link>
+
+  <link name="body_G">
+    <inertial>
+      <!-- mass=0.5 -->
+      <mass value="0.5"/>
+      
+      <!-- r_Go_Gcm=[0, 0, 0.05], R_G_V = eye(3) -->
+      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+
+      <!-- I_G_Gcm = m*diag(sides[1]^2 + sides[2]^2, s0^2+s2^2, s0^2+s1^2) -->
+      <inertia ixx="0.025" ixy="0" ixz="0" iyy="0.025" iyz="0" izz="0.01"/>
+    </inertial>
+
+    <visual>
+      <!-- r_Go_Vo=[0 0 0.05], R_G_V = eye(3) -->
+      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+
+      <geometry>
+        <!-- sides=[0.1 0.1 0.2] -->
+        <box size="0.1 0.1 0.2"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="wrist_roll" type="revolute">
+    <!-- r_Po_Jo=[0,0,1], R_P_J=eye(3) -->
+    <origin xyz="0 0 1" rpy="0 0 0"/>
+    
+    <!-- joint_axis=[1, 0, 0] -->
+    <axis xyz="1 0 0"/>
+
+    <parent link="body_D"/>
+    <child link="body_E"/>
+
+    <!-- Necessary tags but values don't matter -->
+    <limit effort="0" velocity="0"/>
+  </joint>
+
+  <joint name="wrist_pitch" type="revolute">
+    <!-- r_Po_Jo=[0,0,0], R_P_J=eye(3) -->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    
+    <!-- joint_axis=[0, 1, 0] -->
+    <axis xyz="0 1 0"/>
+
+    <parent link="body_E"/>
+    <child link="body_F"/>
+
+    <!-- Necessary tags but values don't matter -->
+    <limit effort="0" velocity="0"/>
+  </joint>
+
+  <joint name="wrist_yaw" type="revolute">
+    <!-- r_Po_Jo=[0,0,0], R_P_J=eye(3) -->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    
+    <!-- joint_axis=[0, 0, 1] -->
+    <axis xyz="0 0 1"/>
+
+    <parent link="body_F"/>
+    <child link="body_G"/>
+
+    <!-- Necessary tags but values don't matter -->
+    <limit effort="0" velocity="0"/>
+  </joint>
+</robot>

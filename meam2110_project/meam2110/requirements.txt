@@ -1,0 +1,6 @@
+meshcat
+numpy
+scipy
+matplotlib
+urchin
+sympy
