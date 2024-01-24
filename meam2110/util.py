@@ -41,7 +41,7 @@ def RoundSmallCoefficients(expr_array, threshold=1e-6):
     result: The expression, or array of expressions, with small coefficients rounded to 0
   '''
   def custom_round(expr):
-    if isinstance(expr, float):
+    if isinstance(expr, float) or isinstance(expr ,int):
       return sym.Number(expr)
     def round_number(n):
       if abs(n) < threshold:
@@ -58,10 +58,14 @@ def RoundSmallCoefficients(expr_array, threshold=1e-6):
   else:
     return custom_round(expr_array)
 
-def SimplifyAndPrint(expr_array):
+def SimplifyAndPrint(expr_array, round_only=False):
   '''
   Simplify and then pretty print the input symbolic expression
   Args:
     expr_array: A numpy array of symbolic expression
+    round_only: Round small coefficients, but do not execute full simplification
   '''
-  sym.pprint(sym.Matrix(sym.simplify(expr_array)))
+  if round_only:
+    sym.pprint(sym.Matrix(RoundSmallCoefficients(expr_array)))
+  else:
+    sym.pprint(sym.Matrix(SimplifyAndRound(expr_array)))
