@@ -4,7 +4,7 @@ As part of this class, we create a Python package to help with calculations and 
 
 
 Notes for running:
-To run, use the Run button in **Run and Debug** menu for VSCode. Should fix ModuleNotFoundError.
+To run, use the green Run button in **Run and Debug** menu for VSCode. Should fix ModuleNotFoundError.
 
 Old:
 If you get a `ModuleNotFoundError` when trying to import the `meam2110` module, nav to the project folder in the terminal and run <br>
