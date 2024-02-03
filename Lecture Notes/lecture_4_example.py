@@ -27,6 +27,16 @@ def rot_x(theta):   # NEEDS TO BE CHECKED!!
   
   return R_A_B
 
+## Testing if this works as expected
+# Let theta = pi/2
+expected = np.array([
+  [1, 0, 0],
+  [0, 0, -1],
+  [0, 1, 0]
+])
+
+print("Testing rot_x(pi/2): ", rot_x(sym.pi/2)==expected)
+
 def rot_y(theta):
   '''
   Calculate R_A_B the rotation matrix that expresses the 'a' vector basis in terms of the 'b' basis.
@@ -45,8 +55,23 @@ def rot_y(theta):
   else:
     from math import sin, cos
   
-  R_A_B = np.eye(3) # REPLACE ME!
+  R_A_B = np.array([
+    [cos(theta), 0, sin(theta)],
+    [0, 1, 0],
+    [-sin(theta), 0, cos(theta)]
+  ])
   return R_A_B
+
+## Testing if this works as expected
+# Let theta = pi/2
+expected = np.array([
+  [0, 0, 1],
+  [0, 1, 0],
+  [-1, 0, 0]
+])
+
+print("Testing rot_y(pi/2): ", rot_y(sym.pi/2)==expected)
+
 
 # Create symbolic variables q_1 and q_2
 q_1 = sym.symbols('q_1')
