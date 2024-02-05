@@ -85,12 +85,14 @@ print(R_A_B)
 # Test rot_y
 R_B_C = rot_y(q_2)
 print('-----R_B_C, a rotation about the y-axis by angle q_2-----')
-print(R_A_B)
+print(R_B_C)
 
 # Calculate and test R_A_C with symbolic inputs above
 print('-----R_A_C with symbolic inputs-----')
-# USE YOUR CODE HERE
+R_A_C = np.matmul(R_A_B, R_B_C)
+print(R_A_C)
 
 # Calculate R_A_C where q_1 = 0.1 radians and q_2 = -.5
 print('-----R_A_C with numeric inputs-----')
-# USE YOUR CODE HERE
+R_A_C_num = np.matmul(rot_x(0.1), rot_y(-0.5))
+print(R_A_C_num)
