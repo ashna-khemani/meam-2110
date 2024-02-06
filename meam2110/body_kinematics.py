@@ -76,7 +76,8 @@ def ChangeCoordinates(system, q, x_A, A, B):
   '''
 
   # YOUR CODE GOES HERE
-  x_B = np.zeros(3) # replace me!
+  R_B_A = RelativeRotationMatrix (system, q, A, B)
+  x_B = R_B_A @ x_A # replace me!
 
   return x_B
 
