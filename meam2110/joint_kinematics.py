@@ -34,18 +34,30 @@ def JointTransformation(system, joint, q):
     # YOUR CODE GOES BELOW (PART 1)
     # Calculate R_J_C for each possible axis of rotation
     if np.array_equal(joint.axis, UnitVector.x):
-      R_J_C = np.eye(3) # replace me!
+      R_J_C = np.array([
+        [1, 0, 0],
+        [0, cos(angle), -sin(angle)],
+        [0, sin(angle), cos(angle)]
+      ])
     elif np.array_equal(joint.axis, UnitVector.y):
-      R_J_C = np.eye(3) # replace me!
+      R_J_C = np.array([
+        [cos(angle), 0, sin(angle)],
+        [0, 1, 0],
+        [-sin(angle), 0, cos(angle)]
+      ])
     elif np.array_equal(joint.axis, UnitVector.z):
-      R_J_C = np.eye(3) # replace me!
+      R_J_C = np.array([
+        [cos(angle), -sin(angle), 0],
+        [sin(angle), cos(angle), 0],
+        [0, 0, 1]
+      ])
 
     # For a rotation joint, the child origin is located at the joint origin
     r_Po_Co = joint.r_Po_Jo
 
     # Calculate R_P_C
     # YOUR CODE GOES HERE (PART 1)
-    R_P_C = np.eye(3) # replace me!
+    R_P_C = joint.R_P_J @ R_J_C
 
   elif joint.type == JointType.translation:
     # Get the position of the relative joint
