@@ -43,10 +43,15 @@ def RelativeRotationMatrix(system, q, A, B):
     # 2) determine R_P_C, using direction_i
     # 3) calculate R_B_C
     # YOUR CODE HERE
-    R_JP_JC = np.eye(3) # replace me!
-    R_P_C = np.eye(3) # replace me!
-    R_B_C = np.eye(3) # replace me!
+    _, R_JP_JC = JointTransformation(system, joint, q)
     
+    if direction_i > 0:
+      R_P_C = R_JP_JC
+    else:
+      R_P_C = R_JP_JC.T
+    
+    R_B_C = R_B_P @ R_P_C
+
   # A is the last child
   R_B_A = R_B_C
 
