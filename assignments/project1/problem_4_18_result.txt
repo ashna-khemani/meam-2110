@@ -30,20 +30,58 @@ theta_B = sym.symbols('theta_B')
 theta_C = sym.symbols('theta_C')
 q = np.array([x, theta_B, theta_C])
 
+from sympy import sin, cos
+
 # Use the methods from this weak to calculate all of the rotation matrices that the problem asks for
 # you can skip the part of the textbook problem that asks for angular velocities
 print('\n  R_B_N:')
-R_B_N = np.eye(3) # REPLACE WITH YOUR CODE
+R_B_N = np.array([
+    [cos(theta_B), sin(theta_B), 0],
+    [-sin(theta_B), cos(theta_B), 0],
+    [0, 0, 1]
+])
 SimplifyAndPrint(R_B_N)
 
 print('\n  R_N_B:')
-R_N_B = np.eye(3) # REPLACE WITH YOUR CODE
+R_N_B = R_B_N.T     # inverse is transpose for rotation matrix
 SimplifyAndPrint(R_N_B)
 
 print('\n  R_C_N:')
-R_C_N = np.eye(3) # REPLACE WITH YOUR CODE
+R_C_N = np.array([
+    [cos(theta_C), sin(theta_C), 0],
+    [-sin(theta_C), cos(theta_C), 0],
+    [0, 0, 1]
+])
 SimplifyAndPrint(R_C_N)
 
 print('\n  R_B_C:')
-R_B_C = np.eye(3) # REPLACE WITH YOUR CODE
+R_B_C = (R_C_N @ R_N_B).T
 SimplifyAndPrint(R_B_C)
+
+  R_B_N:
+⎡cos(θ_B)   sin(θ_B)  0⎤
+⎢                      ⎥
+⎢-sin(θ_B)  cos(θ_B)  0⎥
+⎢                      ⎥
+⎣    0         0      1⎦
+
+  R_N_B:
+⎡cos(θ_B)  -sin(θ_B)  0⎤
+⎢                      ⎥
+⎢sin(θ_B)  cos(θ_B)   0⎥
+⎢                      ⎥
+⎣   0          0      1⎦
+
+  R_C_N:
+⎡cos(θ_C)   sin(θ_C)  0⎤
+⎢                      ⎥
+⎢-sin(θ_C)  cos(θ_C)  0⎥
+⎢                      ⎥
+⎣    0         0      1⎦
+
+  R_B_C:
+⎡cos(θ_B - θ_C)   sin(θ_B - θ_C)  0⎤
+⎢                                  ⎥
+⎢-sin(θ_B - θ_C)  cos(θ_B - θ_C)  0⎥
+⎢                                  ⎥
+⎣       0               0         1⎦
