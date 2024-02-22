@@ -1,5 +1,5 @@
 import numpy as np
-from . import FindPath, JointTransformation, JointChildVelocity, JointChildAcceleration
+from meam2110 import FindPath, JointTransformation, JointChildVelocity, JointChildAcceleration
 
 def RelativeRotationMatrix(system, q, A, B):
   '''
@@ -137,8 +137,20 @@ def BodyAngVelAndAccel(system, q, qdot, A, B, qddot = None):
     # coordinates if necessary!
     #
     # YOUR CODE HERE
-    w_B_C = np.zeros(3)
-    alpha_B_C = np.zeros(3)
+    ### HELP
+    _, w_JP_JC = JointChildVelocity(system, joint, qdot)
+    _, alpha_JP_JC = JointChildAcceleration(system, joint, qddot) 
+
+    if direction_i > 0:
+      w_P_C = ChangeCoordinates(system, q, w_JP_JC, P, B)
+      alpha_P_C = ChangeCoordinates(system, q, alpha_JP_JC, P, B)
+    else:
+      w_P_C = ChangeCoordinates(system, q, -w_JP_JC, C, B)
+      alpha_P_C = ChangeCoordinates(system, q, -alpha_JP_JC, C, B)
+    
+    w_B_C = w_B_P + w_P_C
+    alpha_B_C = alpha_B_P + alpha_P_C + np.cross(w_B_C, w_P_C)
+     
 
   # The last child is A
   w_B_A = w_B_C
