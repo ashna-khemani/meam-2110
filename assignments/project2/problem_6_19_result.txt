@@ -58,3 +58,27 @@ SimplifyAndPrint(w_N_C_B)
 print('\n alpha_N_B in B\'s coordinates: \n')
 alpha_N_B_B = ChangeCoordinates(system, q, BodyAngVelAndAccel(system, q, q_dot, B, N, q_ddot)[1], N, B)
 SimplifyAndPrint(alpha_N_B_B)
+
+ w_N_B in B's coordinates: 
+
+[     -1.0*phi_dot      ]
+[                       ]
+[-1.0*theta_dot*sin(phi)]
+[                       ]
+[-1.0*theta_dot*cos(phi)]
+
+ w_N_C in B's coordinates: 
+
+[          -1.0*phi_dot          ]
+[                                ]
+[    -1.0*theta_dot*sin(phi)     ]
+[                                ]
+[1.0*omega_C - theta_dot*cos(phi)]
+
+ alpha_N_B in B's coordinates: 
+
+[                   -1.0*phi_ddot                    ]
+[                                                    ]
+[1.0*phi_dot*theta_dot*cos(phi) - theta_ddot*sin(phi)]
+[                                                    ]
+[ -phi_dot*theta_dot*sin(phi) - theta_ddot*cos(phi)  ]
