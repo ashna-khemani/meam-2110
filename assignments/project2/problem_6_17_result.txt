@@ -15,9 +15,6 @@ C = Body('C')
 #
 #  Use system.addJoint() to add three joints connecting N, B, C
 
-JNA = system.AddJoint(N, A, JointType.rotation, UnitVector.z)
-JAB = system.AddJoint(A, B, JointType.rotation, UnitVector.y)
-JBC = system.AddJoint(B, C, JointType.rotation, UnitVector.y)
 
 
 
@@ -52,9 +49,25 @@ q_ddot = np.array([q_A_ddot, -q_B_ddot, q_C_ddot])
 #  alpha_N_C_A: the angular acceleration of C in N, expressed in A's coordinates
 
 print('\n w_N_C in A\'s coordinates: \n')
-w_N_C_A = ChangeCoordinates(system, q, BodyAngVelAndAccel(system, q, q_dot, C, N, q_ddot)[0], N, A)
+w_N_C_A = np.zeros(3) # REPLACE ME!
 SimplifyAndPrint(w_N_C_A)
 
 print('\n alpha_N_C in A\'s coordinates: \n')
-alpha_N_C_A = ChangeCoordinates(system, q, BodyAngVelAndAccel(system, q, q_dot, C, N, q_ddot)[1], N, A)
+alpha_N_C_A = np.zeros(3) # REPLACE ME!
 SimplifyAndPrint(alpha_N_C_A)
+
+ w_N_C in A's coordinates: 
+
+[0]
+[ ]
+[0]
+[ ]
+[0]
+
+ alpha_N_C in A's coordinates: 
+
+[0]
+[ ]
+[0]
+[ ]
+[0]
