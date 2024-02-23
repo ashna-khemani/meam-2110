@@ -41,7 +41,7 @@ omega_C_dot = sym.symbols('omega_C_dot')
 #  w_N_B_B: the angular velocity of B in N, expressed in B's coordinates
 #  w_N_C_B: the angular velocity of C in N, expressed in B's coordinates
 #  alpha_N_B_B: the angular acceleration of B in N, expressed in B's coordinates
-q = np.array([theta, phi, q_C])
+q = np.array([-theta, -phi, q_C])
 q_dot = np.array([-theta_dot, -phi_dot, omega_C])
 q_ddot = np.array([-theta_ddot, -phi_ddot, omega_C_dot])
 

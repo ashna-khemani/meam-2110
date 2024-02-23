@@ -41,7 +41,7 @@ omega_C_dot = sym.symbols('omega_C_dot')
 #  w_N_B_B: the angular velocity of B in N, expressed in B's coordinates
 #  w_N_C_B: the angular velocity of C in N, expressed in B's coordinates
 #  alpha_N_B_B: the angular acceleration of B in N, expressed in B's coordinates
-q = np.array([theta, phi, q_C])
+q = np.array([-theta, -phi, q_C])
 q_dot = np.array([-theta_dot, -phi_dot, omega_C])
 q_ddot = np.array([-theta_ddot, -phi_ddot, omega_C_dot])
 
@@ -63,7 +63,7 @@ SimplifyAndPrint(alpha_N_B_B)
 
 [     -1.0*phi_dot      ]
 [                       ]
-[-1.0*theta_dot*sin(phi)]
+[1.0*theta_dot*sin(phi) ]
 [                       ]
 [-1.0*theta_dot*cos(phi)]
 
@@ -71,14 +71,14 @@ SimplifyAndPrint(alpha_N_B_B)
 
 [          -1.0*phi_dot          ]
 [                                ]
-[    -1.0*theta_dot*sin(phi)     ]
+[     1.0*theta_dot*sin(phi)     ]
 [                                ]
 [1.0*omega_C - theta_dot*cos(phi)]
 
  alpha_N_B in B's coordinates: 
 
-[                   -1.0*phi_ddot                    ]
-[                                                    ]
-[1.0*phi_dot*theta_dot*cos(phi) - theta_ddot*sin(phi)]
-[                                                    ]
-[ -phi_dot*theta_dot*sin(phi) - theta_ddot*cos(phi)  ]
+[                     -1.0*phi_ddot                      ]
+[                                                        ]
+[1.0*phi_dot*theta_dot*cos(phi) + 1.0*theta_ddot*sin(phi)]
+[                                                        ]
+[  1.0*phi_dot*theta_dot*sin(phi) - theta_ddot*cos(phi)  ]
