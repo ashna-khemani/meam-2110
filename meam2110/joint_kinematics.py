@@ -1,4 +1,4 @@
-from . import UnitVector, JointType
+from meam2110 import UnitVector, JointType
 import numpy as np
 import sympy as sym
 
@@ -61,12 +61,12 @@ def JointTransformation(system, joint, q):
 
   elif joint.type == JointType.translation:
     # Get the position of the relative joint
-    position = q[system.joints[joint]]
+    position = q[system.joints[joint]]  # what is this bruh
 
     # Calculate R_P_C and r_Po_Co
     # YOUR CODE GOES HERE
-    r_Po_Co = np.zeros(3)
-    R_P_C = np.eye(3)
+    r_Po_Co = joint.r_Po_Jo + joint.R_P_J @ (joint.axis * position) # HELP. = joint.r_Po_Jo + r_Jo_Co (from position???)
+    R_P_C = joint.R_P_J   # for translation, J and C have same orientation
 
   return r_Po_Co, R_P_C
 
@@ -85,20 +85,21 @@ def JointChildVelocity(system, joint, qdot):
   '''
   # YOUR CODE needed to calculate the velocity and angular velocities below
   if joint.type == JointType.fixed:
-    v_P_Co = np.zeros(3) # replace me!
-    w_P_C = np.zeros(3) # replace me!
+    v_P_Co = np.zeros(3) # should be?
+    w_P_C = np.zeros(3) # should be?
   elif joint.type == JointType.rotation:
     # extract the scalar velocity associated with this joint
     angle_dot = qdot[system.joints[joint]]
 
-    v_P_Co = np.zeros(3) # replace me!
-    w_P_C = np.zeros(3) # replace me!
+    w_P_C = joint.R_P_J @ (angle_dot * joint.axis)
+    v_P_Co = np.zeros(3)    # No translational velocity for a rotation joint 
+
   elif joint.type == JointType.translation:
     # extract the scalar velocity associated with this joint
     position_dot = qdot[system.joints[joint]]
 
-    v_P_Co = np.zeros(3) # replace me!
-    w_P_C = np.zeros(3) # replace me!
+    v_P_Co = joint.R_P_J @ (position_dot * joint.axis) ## 
+    w_P_C = np.zeros(3) # Should be 0 because not rotating
 
   return v_P_Co, w_P_C
 
@@ -116,20 +117,24 @@ def JointChildAcceleration(system, joint, qddot):
     alpha_P_C : the angular acceleration of child C in parent P (in P coordinates), \( ^P \\vec \\alpha^C \)
   '''
   # YOUR CODE needed to calculate the velocity and angular velocities below
+  # if qddot[system.joints[joint]] == None:
+  #   qddot[system.joints[joint]] = 0
+
   if joint.type == JointType.fixed:
-    a_P_Co = np.zeros(3) # replace me!
-    alpha_P_C = np.zeros(3) # replace me!
+    a_P_Co = np.zeros(3) # should be 0 because not moving
+    alpha_P_C = np.zeros(3) # should be 0 because not moving
   elif joint.type == JointType.rotation:
     # extract the scalar acceleration associated with this joint
     angle_ddot = qddot[system.joints[joint]]
 
-    a_P_Co = np.zeros(3) # replace me!
-    alpha_P_C = np.zeros(3) # replace me!
+    alpha_P_C = joint.R_P_J @ (angle_ddot * joint.axis)
+    a_P_Co = np.zeros(3)   # should be 0 because joint is fixed on parent, and Jo = Co
+
   elif joint.type == JointType.translation:
     # extract the scalar velocity associated with this joint
     position_ddot = qddot[system.joints[joint]]
     
-    a_P_Co = np.zeros(3) # replace me!
-    alpha_P_C = np.zeros(3) # replace me!
+    a_P_Co = joint.R_P_J @ (position_ddot * joint.axis)  # replace me!   NEED ROTATION MATRIX.? this is ito C, need ito P
+    alpha_P_C = np.zeros(3) # 0 because doesn't rotate
 
   return a_P_Co, alpha_P_C
