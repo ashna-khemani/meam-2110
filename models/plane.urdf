@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<robot name="cube">
+    <link name="inertial_N"/>
+    <link name="frame_A"/>
+    <link name="frame_B"/>
+    <link name="frame_C"/>
+    <link name="frame_D"/>
+    <link name="frame_E"/>
+    <link name="body_F">
+        <inertial>
+            <!-- dummy values for inertia, not accurate at all-->
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <mass value="0.01"/>
+            <inertia ixx="0.00006619" ixy="0" ixz="0" iyy="0.00006619" iyz="0" izz="0.00006619"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="747-400.obj" />
+            </geometry>
+        </visual>
+    </link>
+
+    <joint name="trans_x" type="prismatic">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <limit upper="1000" lower="-1000" effort="10000" velocity="10000"/>
+        <parent link="inertial_N" />
+        <child link="frame_A" />
+        <axis xyz="1 0 0"/>
+    </joint>
+    <joint name="trans_y" type="prismatic">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <limit upper="1000" lower="-1000" effort="10000" velocity="10000"/>
+        <parent link="frame_A" />
+        <child link="frame_B" />
+        <axis xyz="0 1 0"/>
+    </joint>
+    <joint name="trans_z" type="prismatic">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <limit upper="1000" lower="-1000" effort="10000" velocity="10000"/>
+        <parent link="frame_B" />
+        <child link="frame_C" />
+        <axis xyz="0 0 1"/>
+    </joint>
+    <joint name="rot_x" type="continuous">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="frame_C" />
+        <child link="frame_D" />
+        <axis xyz="1 0 0"/>
+    </joint>
+    <joint name="rot_y" type="continuous">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="frame_D" />
+        <child link="frame_E" />
+        <axis xyz="0 1 0"/>
+    </joint>
+    <joint name="rot_z" type="continuous">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="frame_E" />
+        <child link="body_F" />
+        <axis xyz="0 0 1"/>
+    </joint>
+</robot>
