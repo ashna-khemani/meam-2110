@@ -66,7 +66,14 @@ def PointKinematics(system, q, A, B, *, qdot = None, qddot = None, r_Ao_P = np.z
     PARENT = C
     C = path[i+1]
 
-    joint = C.parent_joint
+    # Find joint, joint parent, and joint child
+    if direction_i > 0:
+      JP = path[i]
+      JC = path[i+1]
+    else:
+      JP = path[i+1]
+      JC = path[i]
+    joint = JC.parent_joint
 
     # YOUR CODE HERE
     # The goal of this block of code is to determine
@@ -77,7 +84,7 @@ def PointKinematics(system, q, A, B, *, qdot = None, qddot = None, r_Ao_P = np.z
     #
     # Suggested approach:
     # 1) Calculate position/velocity/acceleration across the joint
-    # 2) Calculate the position/velocity/acceleration from PARENT to C (keeping direction_i in mind)
+    # 2) Calculate the position/velocity/acceleration from PARENT to Co (keeping direction_i in mind)
     # 3) Calculate r_Bo_Co, v_B_Co, a_B_Co
     #
     # Throughout, be sure to keep track of what the coordinates used to express every vector!
