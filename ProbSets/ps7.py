@@ -1,6 +1,7 @@
 ###### FOR PROBLEM 11.9
 
 # %% Lecture 15 Example
+# Lecture 15 Example
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,6 +35,7 @@ plt.show()
 
 
 # %% Find H vect (Hx, Hy, Hz)
+# Find H vect (Hx, Hy, Hz)
 H = [0, 0, 0]
 H[0] = I_1*sol.y.T[:,0]
 H[1] = I_2*sol.y.T[:,1]
@@ -51,6 +53,7 @@ plt.show()
 
 
 # %% Find magnitude of H
+# Find magnitude of H
 H_arr = H_array = np.array(H)
 H_mags = []
 for i in range(len(sol.t)):
@@ -64,3 +67,16 @@ plt.show()
 
 
 # %% Find K (rotational)
+# Find K (rotational)
+K = []
+for i in range(len(sol.t)):
+  curr_K = 0.5 * (I_1*sol.y.T[i][0]**2 + I_2*sol.y.T[i][1]**2 + I_3*sol.y.T[i][2]**2)
+  K.append(curr_K)
+
+plt.figure(4)
+plt.plot(sol.t, K)
+plt.xlabel("Time")
+plt.ylabel("K")
+plt.show()
+
+# %%
