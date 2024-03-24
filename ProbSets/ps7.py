@@ -1,31 +1,66 @@
-# Based on Lecture 15 Example
+###### FOR PROBLEM 11.9
+
+# %% Lecture 15 Example
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 import numpy as np
 
 # calculate dy/dt, where y = [x, xdot]
+I_1 = 1
+I_2 = 3
+I_3 = 10
 def f(t, omega):
-  I_1 = 1
-  I_2 = 3
-  I_3 = 10
   omega_dot = np.array([(I_2 - I_3)/I_1*omega[1]*omega[2],
                         (I_3 - I_1)/I_2*omega[0]*omega[2],
                         (I_1 - I_2)/I_3*omega[0]*omega[1]])
   return omega_dot
 
 
-omega_0 = np.array([.01, 1, .01])
+omega_0 = np.array([7, 0.2, 0.2])
 
-T = 50 # final time
+T = 4 # final time
 sol = solve_ivp(f, [0, T], omega_0, max_step=1e-3)
 
 sol.t # a vector of times, shape (N,)
 sol.y # a vector of values x(t)
 
-
+plt.figure(1)
 ax = plt.gca()
 ax.plot(sol.t, sol.y.T)
-ax.set_xlabel('Time', fontsize=20)
-ax.set_ylabel('omega', fontsize=20)
-ax.legend(['omega_x', 'omega_y', 'omega_z'], fontsize=20)
+ax.set_xlabel('Time')
+ax.set_ylabel('omega')
+ax.legend(['omega_x', 'omega_y', 'omega_z'])
 plt.show()
+
+
+# %% Find H vect (Hx, Hy, Hz)
+H = [0, 0, 0]
+H[0] = I_1*sol.y.T[:,0]
+H[1] = I_2*sol.y.T[:,1]
+H[2] = I_3*sol.y.T[:,2]
+
+plt.figure(2)
+ax2 = plt.gca()
+ax2.plot(sol.t, H[0])
+ax2.plot(sol.t, H[1])
+ax2.plot(sol.t, H[2])
+ax2.set_xlabel('Time')
+ax2.set_ylabel('H')
+ax2.legend(['H_x', 'H_y', 'H_z'])
+plt.show()
+
+
+# %% Find magnitude of H
+H_arr = H_array = np.array(H)
+H_mags = []
+for i in range(len(sol.t)):
+  H_mags.append(np.linalg.norm(H_array[:, i]))
+
+plt.figure(3)
+plt.plot(sol.t, H_mags)
+plt.xlabel("Time")
+plt.ylabel("Magnitude of H")
+plt.show()
+
+
+# %% Find K (rotational)
