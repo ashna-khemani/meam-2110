@@ -89,14 +89,34 @@ def PointKinematics(system, q, A, B, *, qdot = None, qddot = None, r_Ao_P = np.z
     #
     # Throughout, be sure to keep track of what the coordinates used to express every vector!
 
+    # Parent to joint
+    r_Po_Jo_J, R_P_C = JointTransformation(system, joint, q)
+    v_Po_Jo_J, omega_J = JointChildVelocity (system, joint, qdot)
+    a_Po_Jo_J, alpha_J = JointChildAcceleration(system, joint, qddot)
+
+    # Change the above to B basis, not J
+    if (direction_i > 0):
+      r_Po_Jo_B = ChangeCoordinates(system, q, r_Po_Jo_J, PARENT, B)
+      v_Po_Jo_B = ChangeCoordinates(system, q, v_Po_Jo_J, PARENT, B)
+      a_Po_Jo_B = ChangeCoordinates(system, q, a_Po_Jo_J, PARENT, B)
+      omega_B, alpha_B = BodyAngVelAndAccel(system, q, qdot, PARENT, B, qddot=qddot)
+    else:
+      r_Po_Jo_B = ChangeCoordinates(system, q, -1*r_Po_Jo_J, C, B)
+      v_Po_Jo_B = ChangeCoordinates(system, q, -1*v_Po_Jo_J, C, B)
+      a_Po_Jo_B = ChangeCoordinates(system, q, -1*a_Po_Jo_J, C, B)
+      omega_B, alpha_B = BodyAngVelAndAccel(system, q, qdot, C, B, qddot=qddot)
+
+
+
+
     # Update position
-    r_Bo_Co = np.zeros(3) # replace me!
+    r_Bo_Co = r_Bo_Po + r_Po_Jo_B # replace me!
 
     # Update velocity
-    v_B_Co = np.zeros(3) # replace me!
+    v_B_Co = v_B_Po + v_Po_Jo_B + np.cross(omega_B, r_Po_Jo_B) # replace me!
 
     # Update acceleration
-    a_B_Co = np.zeros(3) # replace me!
+    a_B_Co = a_B_Po + np.cross(alpha_B, r_Po_Jo_B) + np.cross(omega_B, np.cross(omega_B, r_Po_Jo_B)) + a_Po_Jo_B + np.cross(2*omega_B, v_Po_Jo_B)
 
   # The last child is A
   r_Bo_Ao = r_Bo_Co
@@ -106,10 +126,13 @@ def PointKinematics(system, q, A, B, *, qdot = None, qddot = None, r_Ao_P = np.z
   # YOUR CODE HERE
   # We're not quite done. What we really want is the position/velocity/accleration of P, not Ao.
 
-  r_Q_P_B = np.zeros(3) # replace me!
+  sum_omegas, sum_alphas = BodyAngVelAndAccel(system, q, qdot, A, B, qddot=qddot)
+  r_Ao_P_B = ChangeCoordinates (system, q, r_Ao_P, A, B)
 
-  v_B_P = np.zeros(3) # replace me!
+  r_Q_P_B = r_Ao_P_B + r_Bo_Ao - r_Bo_Q  # replace me!
 
-  a_B_P = np.zeros(3) # replace me!
+  v_B_P = v_B_Ao + np.cross(sum_omegas, r_Ao_P_B) # replace me!
+
+  a_B_P = a_B_Ao + np.cross(sum_alphas, r_Ao_P_B) + np.cross(sum_omegas, np.cross(sum_omegas, r_Ao_P_B))
 
   return r_Q_P_B, v_B_P, a_B_P

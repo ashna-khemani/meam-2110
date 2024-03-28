@@ -36,28 +36,31 @@ qddot = np.array([q_A_ddot, -q_B_ddot, q_C_ddot])
 
 # Define all the fixed position vectors 
 # YOUR CODE BELOW
-r_No_Ao_N = np.zeros(3) # FIX ME!
-r_Ao_Bo_A = np.zeros(3) # FIX ME!
-r_Bo_Co_B = np.zeros(3) # FIX ME!
-r_Co_Q_C = np.zeros(3) # FIX ME!
+r_No_Ao_N = np.zeros(3) # isn't this still just 0?
+r_Ao_Bo_A = np.array([0, 0, L_A]) 
+r_Bo_Co_B = np.array([L_B, 0, 0])
+r_Co_Q_C = np.array([L_C, 0, 0])
+
 
 # Add three joints connecting N, A, B, C. How are q_A_, q_B, q_C defined in the problem?
 # Be sure to add them in the same order: q_A, q_B, q_C.
 # For this problem, r_Po_Jo (the location of the joint on the parent) is needed!
 # THE DEFINITIONS BELOW ARE WRONG!
 
-# system.AddJoint(N, A, JointType.rotation, UnitVector.?, r_Po_Jo=np.zeros(3))
-# system.AddJoint(A, B, JointType.rotation, UnitVector.?, r_Po_Jo=np.zeros(3))
-# system.AddJoint(B, C, JointType.rotation, UnitVector.?, r_Po_Jo=np.zeros(3))
+JNA = system.AddJoint(N, A, JointType.rotation, UnitVector.z, r_Po_Jo=r_No_Ao_N)
+JAB = system.AddJoint(A, B, JointType.rotation, UnitVector.y, r_Po_Jo=r_Ao_Bo_A)
+JBC = system.AddJoint(B, C, JointType.rotation, UnitVector.y, r_Po_Jo=r_Bo_Co_B)
 
 # Use your code to calculate the velocity and acceleration of Q in A, expressed in C:
 #     v_A_Q_C and a_A_Q_C
 # You'll need to use PointKinematics from this week, and change the coordinates
 
 print('\n*** v_A_Q expressed in C coordinates ***')
-v_A_Q_C = np.zeros(3) # FIX ME!
+_, v_A_Q_A, a_A_Q_A = PointKinematics(system, q, C, A, qdot=qdot, qddot=qddot, r_Ao_P=r_Co_Q_C)
+
+v_A_Q_C = ChangeCoordinates(system, q, v_A_Q_A, A, C) # FIX ME!
 SimplifyAndPrint(v_A_Q_C)
 
 print('\n*** a_A_Q expressed in C coordinates ***')
-a_A_Q_C = np.zeros(3) # FIX ME!
+a_A_Q_C = ChangeCoordinates(system, q, a_A_Q_A, A, C) # FIX ME!
 SimplifyAndPrint(a_A_Q_C)

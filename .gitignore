@@ -1,5 +1,3 @@
 .DS_Store
-*.pyc
-*.obj
-*.urdf
-*.dae
+/meam2110/__pycache__/
+/meam2110/__pycache__
