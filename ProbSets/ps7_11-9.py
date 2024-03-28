@@ -54,7 +54,7 @@ plt.show()
 
 # %% Find magnitude of H
 # Find magnitude of H
-H_arr = H_array = np.array(H)
+H_array = np.array(H)
 H_mags = []
 for i in range(len(sol.t)):
   H_mags.append(np.linalg.norm(H_array[:, i]))
