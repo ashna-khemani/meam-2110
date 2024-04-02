@@ -66,6 +66,9 @@ def SimplifyAndPrint(expr_array, round_only=False):
     round_only: Round small coefficients, but do not execute full simplification
   '''
   if round_only:
-    sym.pprint(sym.Matrix(RoundSmallCoefficients(expr_array)))
+    result = RoundSmallCoefficients(expr_array)
   else:
-    sym.pprint(sym.Matrix(SimplifyAndRound(expr_array)))
+    result = SimplifyAndRound(expr_array)
+  if isinstance(expr_array, np.ndarray):
+    result = sym.Matrix(result)
+  sym.pprint(result)

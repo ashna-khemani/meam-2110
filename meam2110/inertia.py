@@ -29,10 +29,12 @@ def SystemCOM(system, q, B):
   Returns:
     r_Bo_Scm: Center of mass of the system from point Bo, \(^{B_o}\\vec r^{S_{cm}} \) expressed in  B's coordinates
   '''
-  # YOUR CODE HERE
-  # Calculate the position of the center of mass
-  # You may find for loop in SystemMass(system), above, to be helpful as a starting point
-  r_Bo_Scm = np.zeros(3) # replace me!
+  r_Bo_Scm = np.zeros(3)
+  m_S = SystemMass(system)
+
+  for body in system.bodies.values():
+    r_Bo_Bodycm, _, _ = PointKinematics(system, q, body, B, r_Ao_P = body.r_Bo_Bcm)
+    r_Bo_Scm = r_Bo_Scm + body.mass / m_S * r_Bo_Bodycm
 
   return r_Bo_Scm
 
@@ -47,9 +49,8 @@ def ChangeInertiaOrigin(system, B, r_Bcm_P):
   r_Bcm_P" Vector from Bcm to point P, in B coordinates
   I_B_P: Inertia of B about point P, in B coordinates
   '''
-  
-  # YOUR CODE HERE
-  I_B_P = np.eye(3)
+
+  I_B_P = B.I_B_Bcm + B.mass * (r_Bcm_P.dot(r_Bcm_P) * np.eye(3) - np.outer(r_Bcm_P, r_Bcm_P.T))
 
   return I_B_P
 
@@ -57,8 +58,7 @@ def ChangeInertiaOrigin(system, B, r_Bcm_P):
 def ChangeInertiaCoordinates(system, q, I_S_P_A, A, B):
   '''
   I_S_P_B = ChangeInertiaCoordinates(system, q, I_S_P_A, A, B)
-  Changes the inertia matrix for system S from A's coordinates to B's
-  coordinates.
+  Changes the given inertia matrix from A's coordinates to B's coordinates.
 
   system: The RigidBodySystem object
   q: The current system configuration
@@ -69,7 +69,8 @@ def ChangeInertiaCoordinates(system, q, I_S_P_A, A, B):
   I_S_P_B: The inertia of S around P in B coordinates
   '''
 
-  # YOUR CODE HERE
-  I_S_P_B = np.eye(3)
+  R_B_A = RelativeRotationMatrix(system, q, A, B)
+
+  I_S_P_B = R_B_A @ I_S_P_A @ R_B_A.T
 
   return I_S_P_B
