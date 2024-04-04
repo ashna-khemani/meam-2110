@@ -18,7 +18,9 @@ def BodyLinearMomentum(system, q, qdot, A, B):
   '''
   
   # YOUR CODE HERE
-  L_A_B = np.zeros(3)
+  _, v, _ = PointKinematics(system, q, A, B, qdot=qdot, r_Ao_P=A.r_Bo_Bcm, r_Bo_Q=B.r_Bo_Bcm)
+  L_A_B = A.mass * v
+  
 
   return L_A_B
 
@@ -42,7 +44,27 @@ def BodyAngularMomentum(system, q, qdot, A, B, r_Ao_P):
   # YOUR CODE HERE
   # Be careful with the coordinates used for all vectors, and the points about which inertia and momentum
   # are calculated.
-  H_A_P_B = np.zeros(3)
+  # H = I omega
+  
+
+  ####### THIS IS NOT WORKING
+
+  r_Acm_P = -1*A.r_Bo_Bcm + r_Ao_P #in A
+ 
+
+  # I = ChangeInertiaOrigin(system, A, r_Acm_P)
+  # omega, _ = BodyAngVelAndAccel(system, q, qdot, A, B)
+  # H_A_P_B = I@omega
+
+  I_A_P = ChangeInertiaOrigin(system, A, r_Acm_P)  # in A
+  I_A_P = ChangeInertiaCoordinates(system, q, I_A_P, A, B) # change to B
+  w_B_A, _ = BodyAngVelAndAccel(system, q, qdot, A, B) # should be in B
+  r_Acm_P_B = ChangeCoordinates(system, q, r_Acm_P, A, B) # change to B
+  r_P_Acm_B = -1*r_Acm_P_B # should be in B
+  m_A = A.mass
+  _, v_B_P, _ = PointKinematics(system, q, A, B, qdot = qdot, r_Ao_P = r_Ao_P) # should be in B
+
+  H_A_P_B = I_A_P@w_B_A + np.cross(r_P_Acm_B, m_A*v_B_P)
 
   return H_A_P_B
 
