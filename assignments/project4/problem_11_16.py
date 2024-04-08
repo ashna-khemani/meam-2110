@@ -7,9 +7,14 @@ sym.init_printing(use_unicode=False)
 # The problem has four bodies of interest: N, A, B, C
 # N is special, as our system always has an inertial frame
 system = RigidBodySystem(visualize=False)
+N = system.InertialFrameN()
+A = Body('A')
+B = Body('B')
+C = Body('C')
 
 # constants
 m = sym.symbols('m')
+m = np.abs(m)
 r = sym.symbols('r')
 L = sym.symbols('L')
 
@@ -19,11 +24,11 @@ mass_C = m
 # YOUR CODE BELOW !!!!! READ THIS!!
 #
 # Determine the inertia of C about Ccm, and the position of the center of mass in C's coordinates
-I_C_Ccm = np.array([[1, 0, 0],
-                   [0, 1, 0],
-                   [0, 0, 1]]) # fix me
+I_C_Ccm = np.array([[1/4*m*r*r, 0, 0],
+                   [0, 1/4*m*r*r, 0],
+                   [0, 0, 1/2*m*r*r]]) # fix me
 
-r_Co_Ccm = np.array([0, 0, 0]) # Fix me
+r_Co_Ccm = np.array([0, 0, L]) # Fix me
 
 N = system.InertialFrameN()
 A = Body('A')
@@ -51,18 +56,24 @@ omega_C = sym.symbols('omega_C')
 #  Use your code from this week to calculate
 #  L_C_N_B: the linear momentum of C in N, expressed in B's coordinates
 #  H_C_No_N_B: the angular momentum of C about No, in N, expressed in B's coordinates
-q = np.zeros(3) # REPLACE ME!
-q_dot = np.zeros(3) # REPLACE ME!
+JNA = system.AddJoint(N, A, JointType.rotation, UnitVector.z)
+JAB = system.AddJoint(A, B, JointType.rotation,UnitVector.x)
+JBC = system.AddJoint(B, C, JointType.rotation,UnitVector.z)
+
+q = np.array([-theta, -phi, q_C]) # REPLACE ME!
+q_dot = np.array([-theta_dot, -phi_dot, omega_C]) # REPLACE ME!
 q_ddot = np.zeros(3) # REPLACE ME!
 
 
 # Since C is the only body that hass any mass, we only need to compute momentum of C
 print('\n*** L_C_N expressed in B coordinates ***')
-L_C_N_B = np.zeros(3)
+L_C_N = BodyLinearMomentum(system, q, q_dot, C, N)  # in N coords
+L_C_N_B = ChangeCoordinates(system, q, L_C_N, N, B) # switch to B coords
 SimplifyAndPrint(L_C_N_B)
                         
 print('\n*** H_C_No_N expressed in B coordinates ***')
-H_C_No_N_B = np.zeros(3)
+H_C_No_N = BodyAngularMomentum(system, q, q_dot, C, N, r_Ao_P=np.zeros(3)) # in N
+H_C_No_N_B = ChangeCoordinates(system, q, H_C_No_N, N, B)   # switch to B
 SimplifyAndPrint(H_C_No_N_B)
 
 # Optional (ungraded): compute the kinetic energy K_C_N
