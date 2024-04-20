@@ -79,3 +79,20 @@ SimplifyAndPrint(H_C_No_N_B)
 # Optional (ungraded): compute the kinetic energy K_C_N
 # Suggestion: use your kinematics methods from previous weeks, in combination with the momentum results above!
 # If you choose to do this, you'll need the updated util.py from Canvas for SimplifyAndPrint to work properly
+
+*** L_C_N expressed in B coordinates ***
+[1.0*L*theta_dot*sin(phi)*|m|]
+[                            ]
+[     1.0*L*phi_dot*|m|      ]
+[                            ]
+[             0              ]
+
+*** H_C_No_N expressed in B coordinates ***
+[                /     2         2\           ]
+[       -phi_dot*\1.0*L  + 0.25*r /*|m|       ]
+[                                             ]
+[              /     2         2\             ]
+[1.0*theta_dot*\1.0*L  + 0.25*r /*sin(phi)*|m|]
+[                                             ]
+[       2                                     ]
+[  0.5*r *(omega_C - theta_dot*cos(phi))*|m|  ]
