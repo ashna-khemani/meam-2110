@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- =================================================================================== -->
+<!-- |    This document is a hand-crafted representation of the MEAM 2110 ISS          | -->
+<!-- |    handle.                                                                      | -->
+<!-- =================================================================================== -->
+<robot name="spring_pendulum_2dbody">
+  <link name="inertial_N"/>
+
+  <link name="frame_A">
+  <!-- Single character link names aren't properly parsed by ParseVisual.m -->
+   <!-- Need an empty object to get to 3-DOF joint to body -->
+  </link>
+
+  <link name="frame_B">
+   <!-- Need an empty object to get to 3-DOF joint to body -->
+  </link>
+
+
+  <link name="body_C">
+    <inertial>
+      <mass value="2"/>
+      
+      <!-- r_Co_Ccm=[0, 0, 0], R_C_V = eye(3) -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+
+      <!-- I_C_Ccm = diag(16.7653, 5.2453, 12.52) -->
+      <inertia ixx=".01" ixy="0" ixz="0" iyy=".01" iyz="0" izz=".01"/>
+    </inertial>
+
+    <visual>
+      <!-- r_Co_Vo=[0, 0, -0.8571], R_C_V = eye(3) -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+
+      <geometry>
+        <box size="0.5 0.5 0.5"/>
+      </geometry>
+    </visual>
+  </link>
+
+
+  <joint name="trans_y" type="prismatic">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <limit upper="1000" lower="-1000" effort="10000" velocity="10000"/>
+    <parent link="inertial_N" />
+    <child link="frame_A" />
+    <axis xyz="0 1 0"/>
+  </joint>
+  <joint name="trans_z" type="prismatic">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <limit upper="1000" lower="-1000" effort="10000" velocity="10000"/>
+    <parent link="frame_A" />
+    <child link="frame_B" />
+    <axis xyz="0 0 1"/>
+  </joint>
+  <joint name="rot_x" type="revolute">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <limit upper="1000" lower="-1000" effort="10000" velocity="10000"/>
+    <parent link="frame_B" />
+    <child link="body_C" />
+    <axis xyz="1 0 0"/>
+  </joint>
+</robot>
