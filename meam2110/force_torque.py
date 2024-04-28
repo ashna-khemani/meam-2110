@@ -144,7 +144,8 @@ class SpringForce(ForceTorque):
     length_r = sqrt(r_H_G_N[0]**2 + r_H_G_N[1]**2 + r_H_G_N[2]**2)
     unitVect_r = r_H_G_N / length_r
     F_C_N = self.k * (length_r - self.L0) * unitVect_r # replace me!
-    T_C_N = np.cross(self.r_Co_G, F_C_N) # replace me!
+    # T_C_N = np.cross(self.r_Co_G, F_C_N) # replace me!
+    T_C_N = np.zeros(3)
 
 
     return F_C_N, T_C_N
