@@ -384,8 +384,14 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
        - the moment of applied forces about the center of mass, which arise due
           to the points of application of said forces
   '''
+  # Will collect all the M's and F's in N...
+  M_Bcm_N = np.zeros(3)
+  F_B_N = np.zeros(3)
+
+  # ... then convert to A
   F_B_A = np.zeros(3)
   M_Bcm_A = np.zeros(3)
+
 
   if A is None:
     A = system.InertialFrameN()
@@ -399,24 +405,36 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
     # Check if the ForceTorque acts on the body (if the ForceTorque's parent or child is B)
     # If it does, add in the effect of the ForceTorque
 
+    N = system.InertialFrameN()
+
 
     # YOUR CODE GOES BELOW!
     if B == force_torque.C:
       # B = C, child body in ForceTorque.m
       # Force is applied at point G=E
-      None # delete this line when you're ready to code here
+      # None # delete this line when you're ready to code here
+      new_F, _ = force_torque.ComputeForceAndTorque(system=system, q=q, qdot=qdot)
+      F_B_N = F_B_N + new_F
+      r_Bcm_E_B = -1*B.r_Bo_Bcm+force_torque.r_Co_G
+      r_Bcm_E_N = ChangeCoordinates(system, q, r_Bcm_E_B, B, N)
+      M_Bcm_N = M_Bcm_N + np.cross(r_Bcm_E_N, F_B_N)
     elif B == force_torque.P:
+      new_F, _ = force_torque.ComputeForceAndTorque(system, q, qdot)
+      F_B_N = F_B_N - new_F
+      r_Bcm_E_B = -1*B.r_Bo_Bcm+force_torque.r_Co_G
+      r_Bcm_E_N = ChangeCoordinates(system, q, r_Bcm_E_B, B, N)
+      M_Bcm_N = M_Bcm_N - np.cross(r_Bcm_E_N, F_B_N)
       # B = P, parent body in ForceTorque.m
       # Force is applied at point H=E
-      None # delete this line when you're ready to code here
+      # None # delete this line when you're ready to code here
     else:
       # this force does not act on or from body B
       continue
 
     # add to get net force and moment about center of mass, accounting
     # for the point of application F of the force
-    F_B_A = F_B_A # replace me!
-    M_Bcm_A = M_Bcm_A # replace me!
+  F_B_A = ChangeCoordinates(system, q, F_B_N, N, A) # replace me!
+  M_Bcm_A = ChangeCoordinates(system, q, M_Bcm_N, N, A) # replace me!
   return F_B_A, M_Bcm_A
 
 
