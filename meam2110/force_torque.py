@@ -137,10 +137,14 @@ class SpringForce(ForceTorque):
       from sympy import sqrt
     else:
       from math import sqrt
-
+    N = system.InertialFrameN()
     # YOUR CODE HERE! Calculate the appropriate force and torque from a spring
-    F_C_N = np.zeros(3) # replace me!
-    T_C_N = np.zeros(3) # replace me!
+    r_H_G_C, _, _ = PointKinematics(system, q, qdot=qdot, A=self.P, B=self.C, r_Ao_P=self.r_Po_H, r_Bo_Q=self.r_Co_G)
+    r_H_G_N = ChangeCoordinates(system, q, r_H_G_C, self.C, N)
+    length_r = sqrt(r_H_G_N[0]**2 + r_H_G_N[1]**2 + r_H_G_N[2]**2)
+    unitVect_r = r_H_G_N / length_r
+    F_C_N = self.k * (length_r - self.L0) * unitVect_r # replace me!
+    T_C_N = np.cross(self.r_Co_G, F_C_N) # replace me!
 
 
     return F_C_N, T_C_N
