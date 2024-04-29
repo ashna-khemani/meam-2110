@@ -384,9 +384,6 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
        - the moment of applied forces about the center of mass, which arise due
           to the points of application of said forces
   '''
-  # Will collect all the M's and F's in N...
-  M_Bcm_N = np.zeros(3)
-  F_B_N = np.zeros(3)
 
   # ... then convert to A
   F_B_A = np.zeros(3)
@@ -413,17 +410,17 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
       # B = C, child body in ForceTorque.m
       # Force is applied at point G=E
       # None # delete this line when you're ready to code here
-      new_F, new_T = force_torque.ComputeForceAndTorque(system=system, q=q, qdot=qdot)
-      F_B_N = F_B_N + new_F
-      r_Bcm_E_B = -1*B.r_Bo_Bcm+force_torque.r_Co_G
-      r_Bcm_E_N = ChangeCoordinates(system, q, r_Bcm_E_B, B, N)
-      M_Bcm_N = M_Bcm_N + np.cross(r_Bcm_E_N, F_B_N)
+      new_F_N, new_T_N = force_torque.ComputeForceAndTorque(system=system, q=q, qdot=qdot)
+      new_F_A = ChangeCoordinates(system, q, new_F_N, force_torque.P, A)
+      new_T_A = ChangeCoordinates(system, q, new_T_N, force_torque.P, A)
+      F_B_A = F_B_A + new_F_A
+      M_Bcm_A = M_Bcm_A + np.cross(force_torque.r_Co_G, new_F_A)
     elif B == force_torque.P:
-      new_F, new_F = force_torque.ComputeForceAndTorque(system, q, qdot)
-      F_B_N = F_B_N - new_F
-      r_Bcm_E_B = -1*B.r_Bo_Bcm+force_torque.r_Po_H
-      r_Bcm_E_N = ChangeCoordinates(system, q, r_Bcm_E_B, B, N)
-      M_Bcm_N = M_Bcm_N - np.cross(r_Bcm_E_N, F_B_N)
+      new_F_N, new_T_N = force_torque.ComputeForceAndTorque(system=system, q=q, qdot=qdot)
+      new_F_A = ChangeCoordinates(system, q, new_F_N, force_torque.P, A)
+      new_T_A = ChangeCoordinates(system, q, new_T_N, force_torque.P, A)
+      F_B_A = F_B_A - new_F_A
+      M_Bcm_A = M_Bcm_A + np.cross(force_torque.r_Po_H, new_F_A)
       # B = P, parent body in ForceTorque.m
       # Force is applied at point H=E
       # None # delete this line when you're ready to code here
@@ -433,9 +430,10 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
 
     # add to get net force and moment about center of mass, accounting
     # for the point of application F of the force
-  F_B_A = ChangeCoordinates(system, q, F_B_N, N, A) # replace me!
-  M_Bcm_A = ChangeCoordinates(system, q, M_Bcm_N, N, A) # replace me!
+    F_B_A = F_B_A
+    M_Bcm_A = M_Bcm_A + new_T_A
   return F_B_A, M_Bcm_A
+
 
 
 def AddGravityToSystem(system, g=9.81):
