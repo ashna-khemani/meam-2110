@@ -75,5 +75,5 @@ print('\n-------------------------- second equation  -------------------------- 
 # Just type in the left-hand side, from the second equation in solution in 15.9
 # Since the right-hand side is zero in the textbook, you should also get zero!
 # Follow the pattern above, using sol[x_ddot] and sol[theta_ddot]
-equation_two_left_hand_side = 0 # replace me
+equation_two_left_hand_side = m_B*L*sym.cos(theta)*sol[x_ddot] + (Izz + m_B*L**2)*sol[theta_ddot] - m_B*g*L*sym.sin(theta) # replace me
 SimplifyAndPrint(equation_two_left_hand_side)
