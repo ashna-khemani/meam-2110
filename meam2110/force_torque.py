@@ -188,7 +188,6 @@ class ConstantVelocityController(ForceTorque):
     elif self.joint.type == JointType.translation:
       F_C_P = self.joint.R_P_J @ self.joint.axis * magnitude
       F_C_N = ChangeCoordinates(system, q, F_C_P, self.P, system.InertialFrameN())
-      
       T_C_N = np.zeros(3)
 
     return F_C_N, T_C_N
@@ -403,6 +402,9 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
     # If it does, add in the effect of the ForceTorque
 
     N = system.InertialFrameN()
+    new_F_N, new_T_N = force_torque.ComputeForceAndTorque(system=system, q=q, qdot=qdot)
+    new_F_A = ChangeCoordinates(system, q, new_F_N, N, A)
+    new_T_A = ChangeCoordinates(system, q, new_T_N, N, A)
 
 
     # YOUR CODE GOES BELOW!
@@ -410,17 +412,15 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
       # B = C, child body in ForceTorque.m
       # Force is applied at point G=E
       # None # delete this line when you're ready to code here
-      new_F_N, new_T_N = force_torque.ComputeForceAndTorque(system=system, q=q, qdot=qdot)
-      new_F_A = ChangeCoordinates(system, q, new_F_N, force_torque.P, A)
-      new_T_A = ChangeCoordinates(system, q, new_T_N, force_torque.P, A)
+      r_Bcm_E_B = force_torque.r_Co_G-force_torque.C.r_Bo_Bcm
+      r_Bcm_E_A = ChangeCoordinates(system, q, r_Bcm_E_B, force_torque.C, A)
       F_B_A = F_B_A + new_F_A
-      M_Bcm_A = M_Bcm_A + np.cross(force_torque.r_Co_G, new_F_A)
+      M_Bcm_A = M_Bcm_A + new_T_A + np.cross(r_Bcm_E_A, new_F_A)
     elif B == force_torque.P:
-      new_F_N, new_T_N = force_torque.ComputeForceAndTorque(system=system, q=q, qdot=qdot)
-      new_F_A = ChangeCoordinates(system, q, new_F_N, force_torque.P, A)
-      new_T_A = ChangeCoordinates(system, q, new_T_N, force_torque.P, A)
+      r_Bcm_E_B = force_torque.r_Po_H-force_torque.P.r_Bo_Bcm
+      r_Bcm_E_A = ChangeCoordinates(system, q, r_Bcm_E_B, force_torque.P, A)
       F_B_A = F_B_A - new_F_A
-      M_Bcm_A = M_Bcm_A + np.cross(force_torque.r_Po_H, new_F_A)
+      M_Bcm_A = M_Bcm_A - new_T_A - np.cross(r_Bcm_E_A, new_F_A)
       # B = P, parent body in ForceTorque.m
       # Force is applied at point H=E
       # None # delete this line when you're ready to code here
@@ -430,8 +430,8 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
 
     # add to get net force and moment about center of mass, accounting
     # for the point of application F of the force
-    F_B_A = F_B_A
-    M_Bcm_A = M_Bcm_A + new_T_A
+    # F_B_A = F_B_A
+    # M_Bcm_A = M_Bcm_A
   return F_B_A, M_Bcm_A
 
 

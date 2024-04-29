@@ -23,14 +23,18 @@ def NewtonEulerBodyEquations(system, q, qdot, qddot_sym, B):
   '''
   # YOUR CODE GOES HERE
   N = system.InertialFrameN()
-  F, M = ComputeAppliedForcesAndMoments(system=system, q=q, qdot=qdot, B=B, A=N)
+  F_N, M_N = ComputeAppliedForcesAndMoments(system=system, q=q, qdot=qdot, B=B, A=N)
   m = B.mass
-  _, _, a = PointKinematics(system=system, q=q, A=B, B=N, qddot=qddot_sym, r_Ao_P=B.r_Bo_Bcm)
-  eqn_linear = F - m*a # replace me! this is just a dummy 3x1 vector of (symbolic typed) zeros
+  _, _, a = PointKinematics(system=system, q=q, A=B, B=N, qdot=qdot, qddot=qddot_sym, r_Ao_P=B.r_Bo_Bcm)
+  eqn_linear = F_N - m*a # replace me! this is just a dummy 3x1 vector of (symbolic typed) zeros
 
-  I = B.I_B_Bcm
-  omega, alpha = BodyAngVelAndAccel(system=system, q=q, qdot=qdot, A=B, B=N, qddot=qddot_sym)
-  eqn_angular = M - I@alpha - np.cross(omega, I@omega) # replace me! this is just a dummy 3x1 vector of (symbolic typed) zeros
+  omega_N, alpha_N = BodyAngVelAndAccel(system=system, q=q, qdot=qdot, A=B, B=N, qddot=qddot_sym)
+  omega_B = ChangeCoordinates(system, q, omega_N, N, B)
+  alpha_B = ChangeCoordinates(system, q, alpha_N, N, B)
+  M_B = ChangeCoordinates(system, q, M_N, N, B)
+  I_B = B.I_B_Bcm
+  eqn_angular = M_B - (I_B@alpha_B) - np.cross(omega_B, (I_B@omega_B)) # replace me! this is just a dummy 3x1 vector of (symbolic typed) zeros
+
   eqn = np.hstack((eqn_linear, eqn_angular))
   return eqn
 
