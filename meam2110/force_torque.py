@@ -413,15 +413,15 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
       # B = C, child body in ForceTorque.m
       # Force is applied at point G=E
       # None # delete this line when you're ready to code here
-      new_F, _ = force_torque.ComputeForceAndTorque(system=system, q=q, qdot=qdot)
+      new_F, new_T = force_torque.ComputeForceAndTorque(system=system, q=q, qdot=qdot)
       F_B_N = F_B_N + new_F
       r_Bcm_E_B = -1*B.r_Bo_Bcm+force_torque.r_Co_G
       r_Bcm_E_N = ChangeCoordinates(system, q, r_Bcm_E_B, B, N)
       M_Bcm_N = M_Bcm_N + np.cross(r_Bcm_E_N, F_B_N)
     elif B == force_torque.P:
-      new_F, _ = force_torque.ComputeForceAndTorque(system, q, qdot)
+      new_F, new_F = force_torque.ComputeForceAndTorque(system, q, qdot)
       F_B_N = F_B_N - new_F
-      r_Bcm_E_B = -1*B.r_Bo_Bcm+force_torque.r_Co_G
+      r_Bcm_E_B = -1*B.r_Bo_Bcm+force_torque.r_Po_H
       r_Bcm_E_N = ChangeCoordinates(system, q, r_Bcm_E_B, B, N)
       M_Bcm_N = M_Bcm_N - np.cross(r_Bcm_E_N, F_B_N)
       # B = P, parent body in ForceTorque.m
