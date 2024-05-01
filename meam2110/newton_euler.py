@@ -22,8 +22,19 @@ def NewtonEulerBodyEquations(system, q, qdot, qddot_sym, B):
     For appropriate \\(F, a, M, I, \\omega, and \\alpha \\)
   '''
   # YOUR CODE GOES HERE
-  eqn_linear = np.zeros(3, dtype = type(qddot_sym)) # replace me! this is just a dummy 3x1 vector of (symbolic typed) zeros
-  eqn_angular = np.zeros(3, dtype = type(qddot_sym)) # replace me! this is just a dummy 3x1 vector of (symbolic typed) zeros
+  N = system.InertialFrameN()
+  F_N, M_N = ComputeAppliedForcesAndMoments(system=system, q=q, qdot=qdot, B=B, A=N)
+  m = B.mass
+  _, _, a = PointKinematics(system=system, q=q, A=B, B=N, qdot=qdot, qddot=qddot_sym, r_Ao_P=B.r_Bo_Bcm)
+  eqn_linear = F_N - m*a # replace me! this is just a dummy 3x1 vector of (symbolic typed) zeros
+
+  omega_N, alpha_N = BodyAngVelAndAccel(system=system, q=q, qdot=qdot, A=B, B=N, qddot=qddot_sym)
+  omega_B = ChangeCoordinates(system, q, omega_N, N, B)
+  alpha_B = ChangeCoordinates(system, q, alpha_N, N, B)
+  M_B = ChangeCoordinates(system, q, M_N, N, B)
+  I_B = B.I_B_Bcm
+  eqn_angular = M_B - (I_B@alpha_B) - np.cross(omega_B, (I_B@omega_B)) # replace me! this is just a dummy 3x1 vector of (symbolic typed) zeros
+
   eqn = np.hstack((eqn_linear, eqn_angular))
   return eqn
 

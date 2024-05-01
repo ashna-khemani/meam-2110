@@ -137,10 +137,15 @@ class SpringForce(ForceTorque):
       from sympy import sqrt
     else:
       from math import sqrt
-
+    N = system.InertialFrameN()
     # YOUR CODE HERE! Calculate the appropriate force and torque from a spring
-    F_C_N = np.zeros(3) # replace me!
-    T_C_N = np.zeros(3) # replace me!
+    r_H_G_C, _, _ = PointKinematics(system, q, qdot=qdot, A=self.P, B=self.C, r_Ao_P=self.r_Po_H, r_Bo_Q=self.r_Co_G)
+    r_H_G_N = ChangeCoordinates(system, q, r_H_G_C, self.C, N)
+    length_r = sqrt(r_H_G_N[0]**2 + r_H_G_N[1]**2 + r_H_G_N[2]**2)
+    unitVect_r = r_H_G_N / length_r
+    F_C_N = self.k * (length_r - self.L0) * unitVect_r # replace me!
+    # T_C_N = np.cross(self.r_Co_G, F_C_N) # replace me!
+    T_C_N = np.zeros(3)
 
 
     return F_C_N, T_C_N
@@ -183,7 +188,6 @@ class ConstantVelocityController(ForceTorque):
     elif self.joint.type == JointType.translation:
       F_C_P = self.joint.R_P_J @ self.joint.axis * magnitude
       F_C_N = ChangeCoordinates(system, q, F_C_P, self.P, system.InertialFrameN())
-      
       T_C_N = np.zeros(3)
 
     return F_C_N, T_C_N
@@ -379,8 +383,11 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
        - the moment of applied forces about the center of mass, which arise due
           to the points of application of said forces
   '''
+
+  # ... then convert to A
   F_B_A = np.zeros(3)
   M_Bcm_A = np.zeros(3)
+
 
   if A is None:
     A = system.InertialFrameN()
@@ -394,25 +401,39 @@ def ComputeAppliedForcesAndMoments(system, q, qdot, B, A = None):
     # Check if the ForceTorque acts on the body (if the ForceTorque's parent or child is B)
     # If it does, add in the effect of the ForceTorque
 
+    N = system.InertialFrameN()
+    new_F_N, new_T_N = force_torque.ComputeForceAndTorque(system=system, q=q, qdot=qdot)
+    new_F_A = ChangeCoordinates(system, q, new_F_N, N, A)
+    new_T_A = ChangeCoordinates(system, q, new_T_N, N, A)
+
 
     # YOUR CODE GOES BELOW!
     if B == force_torque.C:
       # B = C, child body in ForceTorque.m
       # Force is applied at point G=E
-      None # delete this line when you're ready to code here
+      # None # delete this line when you're ready to code here
+      r_Bcm_E_B = force_torque.r_Co_G-force_torque.C.r_Bo_Bcm
+      r_Bcm_E_A = ChangeCoordinates(system, q, r_Bcm_E_B, force_torque.C, A)
+      F_B_A = F_B_A + new_F_A
+      M_Bcm_A = M_Bcm_A + new_T_A + np.cross(r_Bcm_E_A, new_F_A)
     elif B == force_torque.P:
+      r_Bcm_E_B = force_torque.r_Po_H-force_torque.P.r_Bo_Bcm
+      r_Bcm_E_A = ChangeCoordinates(system, q, r_Bcm_E_B, force_torque.P, A)
+      F_B_A = F_B_A - new_F_A
+      M_Bcm_A = M_Bcm_A - new_T_A - np.cross(r_Bcm_E_A, new_F_A)
       # B = P, parent body in ForceTorque.m
       # Force is applied at point H=E
-      None # delete this line when you're ready to code here
+      # None # delete this line when you're ready to code here
     else:
       # this force does not act on or from body B
       continue
 
     # add to get net force and moment about center of mass, accounting
     # for the point of application F of the force
-    F_B_A = F_B_A # replace me!
-    M_Bcm_A = M_Bcm_A # replace me!
+    # F_B_A = F_B_A
+    # M_Bcm_A = M_Bcm_A
   return F_B_A, M_Bcm_A
+
 
 
 def AddGravityToSystem(system, g=9.81):
