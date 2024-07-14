@@ -1,10 +1,12 @@
 # meam-2110
-As part of this class, we create a Python package to help with calculations and simulations with dynamics.
+As part of this class, I created a Python package to help with calculations and simulations with dynamics.
 
 
 
 Notes for running:
-To run, use the green Run button in **Run and Debug** menu for VSCode. Should fix ModuleNotFoundError.
+To run, use the green Run button in **Run and Debug** menu for VSCode. Should fix ModuleNotFoundError below.
+
+
 
 Old:
 If you get a `ModuleNotFoundError` when trying to import the `meam2110` module, nav to the project folder in the terminal and run <br>
